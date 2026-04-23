@@ -5,3 +5,9 @@ output "bucket_name" {
 output "ecr_repo_url" {
   value = aws_ecr_repository.my_ecr.repository_url
 }
+
+output "rds_endpoint" {
+   value = aws_db_instance.postgres.endpoint
+}
+
+
