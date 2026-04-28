@@ -23,28 +23,44 @@ resource "aws_ecs_task_definition" "app" {
   execution_role_arn = aws_iam_role.ecs_execution_role.arn
 
   container_definitions = jsonencode([
-    {
-      name  = "generator"
-      image = "866934333672.dkr.ecr.us-east-1.amazonaws.com/terraform-poc1-app:latest"
+  {
+    name      = "generator"
+    image     = "866934333672.dkr.ecr.us-east-1.amazonaws.com/terraform-poc1-app:latest"
+    essential = true
 
-      essential = true
+    environment = [
+      {
+        name  = "DB_HOST"
+        value = aws_db_instance.postgres.address
+      },
+      {
+        name  = "DB_PORT"
+        value = "5432"
+      },
+      {
+        name  = "DB_NAME"
+        value = "postgres"
+      },
+      {
+        name  = "DB_USER"
+        value = var.db_username
+      },
+      {
+        name  = "DB_PASSWORD"
+        value = var.db_password
+      }
+    ]
 
-      environment = [
-        {
-          name  = "DB_HOST"
-          value = aws_db_instance.postgres.endpoint
-        },
-        {
-          name  = "DB_USER"
-          value = var.db_username
-        },
-        {
-          name  = "DB_PASSWORD"
-          value = var.db_password
-        }
-      ]
+    # 👇 THIS is what you are missing
+    logConfiguration = {
+      logDriver = "awslogs"
+      options = {
+        awslogs-group         = "/ecs/poc-task"
+        awslogs-region        = "us-east-1"
+        awslogs-stream-prefix = "ecs"
+      }
     }
-  ])
+  }])
 }
 
 resource "aws_ecs_service" "app" {

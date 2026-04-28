@@ -28,7 +28,6 @@ resource "aws_security_group" "rds_sg" {
     protocol        = "tcp"
     security_groups = [aws_security_group.ecs_sg.id]
   }
-
   egress {
     from_port   = 0
     to_port     = 0
@@ -84,7 +83,7 @@ resource "aws_db_instance" "postgres" {
 
   backup_retention_period = 7
 
-  publicly_accessible = false   
+  publicly_accessible = true  
 
   skip_final_snapshot = true
 
