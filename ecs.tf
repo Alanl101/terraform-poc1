@@ -51,7 +51,7 @@ resource "aws_ecs_task_definition" "app" {
       }
     ]
 
-    # 👇 THIS is what you are missing
+    # Logging 
     logConfiguration = {
       logDriver = "awslogs"
       options = {
@@ -68,7 +68,7 @@ resource "aws_ecs_service" "app" {
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.app.arn
   launch_type     = "FARGATE"
-  desired_count   = 1
+  desired_count   = 0
 
   network_configuration {
     subnets         = [aws_subnet.public.id]
