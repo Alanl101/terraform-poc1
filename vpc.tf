@@ -33,6 +33,16 @@ resource "aws_subnet" "public" {
   }
 }
 
+resource "aws_subnet" "public_2" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.0.4.0/24"
+  map_public_ip_on_launch = true
+  availability_zone       = "us-east-1b"
+  tags = {
+    Name = "public-subnet-2"
+  }
+}
+
 ############################################
 # PRIVATE SUBNETS (RDS + ECS tasks)
 ############################################
@@ -71,5 +81,10 @@ resource "aws_route" "internet" {
 
 resource "aws_route_table_association" "public_assoc" {
   subnet_id      = aws_subnet.public.id
+  route_table_id = aws_route_table.public_rt.id
+}
+
+resource "aws_route_table_association" "public_assoc_2" {
+  subnet_id      = aws_subnet.public_2.id
   route_table_id = aws_route_table.public_rt.id
 }

@@ -5,8 +5,8 @@ resource "aws_db_subnet_group" "rds_subnet" {
   name = "poc-rds-subnet"
 
   subnet_ids = [
-    aws_subnet.private_1.id,
-    aws_subnet.private_2.id
+  aws_subnet.public.id,
+  aws_subnet.public_2.id
   ]
 
   tags = {
@@ -21,12 +21,25 @@ resource "aws_security_group" "rds_sg" {
   name   = "rds-sg"
   vpc_id = aws_vpc.main.id
 
+  # ECS access
   ingress {
-    description     = "Postgres access from ECS only"
+    description = "RDS access from ECS tasks"
     from_port       = 5432
     to_port         = 5432
     protocol        = "tcp"
     security_groups = [aws_security_group.ecs_sg.id]
+  }
+
+  # laptop 32 means 1 machine 
+  ingress {
+    description = "RDS access from client on laptop"
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = [
+      var.workip + "/32",
+      var.housingip + "/32"
+    ]
   }
   egress {
     from_port   = 0
