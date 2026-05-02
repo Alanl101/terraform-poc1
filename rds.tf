@@ -37,8 +37,8 @@ resource "aws_security_group" "rds_sg" {
     to_port     = 5432
     protocol    = "tcp"
     cidr_blocks = [
-      var.workip + "/32",
-      var.housingip + "/32"
+      format("%s/32", var.workip),
+      format("%s/32", var.housingip)
     ]
   }
   egress {
